@@ -7,8 +7,7 @@
 
 #include "helper.h"
 
-class zbuff
-{
+class zbuff {
  public:
   int w ;  // width
   int h ;  // height
@@ -22,22 +21,22 @@ class zbuff
   uint*   depth_buffer ;
 
   uchar* eval_ss();
-  void eval_ss( uchar* rgb , ushort* fb_pix);
+  void eval_ss(uchar* rgb, ushort* fb_pix);
 
  public:
 
-  zbuff( int w_in , int h_in , int ss_in );
+  zbuff(int w_in, int h_in, int ss_in);
 
-  void write_ppm( char* file_name );
+  void write_ppm(char* file_name);
 
-  void process_Fragment( int x , int y , 
-			 int ss_x , int ss_y ,
-			 uint d ,
-			 ushort R ,
-			 ushort G ,
-			 ushort B ,
-			 ushort A  ) ;
+  void process_Fragment(int x, int y,
+                        int ss_x, int ss_y,
+                        uint d,
+                        ushort R,
+                        ushort G,
+                        ushort B,
+                        ushort A) ;
 
 };
 
-#endif 
+#endif
