@@ -3,10 +3,6 @@
 #include "assert.h"
 #include "limits.h"
 
-
-
-
-
 void rastBBox_vec_fix(vector< u_Poly< long, ushort > >& polys,
                       zbuff& z) {
   int i;
