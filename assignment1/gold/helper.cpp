@@ -6,7 +6,8 @@ void abort_(const char * s, ...) {
   vfprintf(stderr, s, args);
   fprintf(stderr, "\n");
   va_end(args);
-  abort();
+  // Don't crash immediately on test failures - SL
+  //abort();
 }
 
 uchar *blank(int w, int h) {

@@ -27,7 +27,7 @@ bool testRast() {
   long r_val   = 1024 ; //This is the value of 1 << r_shift
 
   long screen_w = 1024 << r_shift ; // 1024 pixels wide (on x axis)
-  long screen_h = 1024 << r_shift ; // 1024 pixels tall (on y axit)
+  long screen_h = 1024 << r_shift ; // 1024 pixels tall (on y axis)
 
   int ss_w_lg2 = 2 ; // This is the log_2 ( sqrt( MSAA ) )
 
@@ -42,7 +42,7 @@ bool testRast() {
   poly.v[2].x[1] = 661 << (r_shift - 2);   //v2.y
 
   poly.v[3].x[0] = 561 << (r_shift - 2);   //v3.x
-  poly.v[3].x[1] = 680 << (r_shift - 2);   //v.y
+  poly.v[3].x[1] = 680 << (r_shift - 2);   //v3.y
 
   poly.vertices = 3; //The number of vertices
   // Three is a triangle
@@ -67,19 +67,19 @@ bool testRast() {
                     screen_w, screen_h, valid, r_shift, r_val);
 
   if(! valid) {
-    abort_("Fail Test 1");
+    abort_("Fail Test 1 Condition 1");
   }
   if(ll_x != (556 << (r_shift - 2))) {
-    abort_("Fail Test 1");
+    abort_("Fail Test 1 Condition 2");
   }
   if(ll_y != (660 << (r_shift - 2))) {
-    abort_("Fail Test 1");
+    abort_("Fail Test 1 Condition 3");
   }
   if(ur_x != (562 << (r_shift - 2))) {
-    abort_("Fail Test 1");
+    abort_("Fail Test 1 Condition 4");
   }
   if(ur_y != (679 << (r_shift - 2))) {
-    abort_("Fail Test 1");
+    abort_("Fail Test 1 Condition 5");
   }
 
   printf("\t\tPass Test 1\n");
