@@ -1,0 +1,6 @@
+A quick rundown of the kinds of files in this directory:
+vec_271_01.png     -> A refernce image from RT-REYES, FYI only
+vec_271_01_sv.dat  -> A full set of test vector
+vec_271_01_sv_ref.ppm -> A reference image for verifying long test vector
+vec_271_01_sv_short.dat -> A short test vector
+vec_271_01_sv_short_ref.ppm -> A reference image of for verifying short test vector

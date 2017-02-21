@@ -38,6 +38,7 @@ using namespace std;
 typedef unsigned char uchar ;
 typedef unsigned short ushort ;
 typedef unsigned int  uint;
+typedef long int64;
 
 template< typename T, typename S > struct uP_vertex {
 
