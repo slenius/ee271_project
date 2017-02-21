@@ -84,6 +84,106 @@ bool testRast() {
 
   printf("\t\tPass Test 1\n");
 
+  /* more tests for boundary box */
+
+  // bbox extra test 1 - upoly is a quad && clipping area beyond screen
+  poly.v[0].x[0] = -1 << ( r_shift - 2 ); //v0.x
+  poly.v[0].x[1] = 1220 << ( r_shift ); //v0.y
+
+  poly.v[1].x[0] = 562 << ( r_shift - 2 ); //v1.x
+  poly.v[1].x[1] = 660 << ( r_shift - 2 ); //v1.y
+
+  poly.v[2].x[0] = 557 << ( r_shift - 2 ); //v2.x
+  poly.v[2].x[1] = 661 << ( r_shift - 2 ); //v2.y
+
+  poly.v[3].x[0] = 580 << ( r_shift - 2 ); //v3.x
+  poly.v[3].x[1] = 681 << ( r_shift - 2 ); //v.y
+
+  poly.vertices = 4; 
+  
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+          screen_w, screen_h, valid, r_shift, r_val);
+
+  if( ! valid ){
+    abort_("Fail Test 1-1"); 
+  }
+  if( ll_x != (0 << ( r_shift - 2 )) ){
+    abort_("Fail Test 1-1"); 
+  }
+  if( ll_y != (660 << ( r_shift - 2 )) ){
+    abort_("Fail Test 1-1"); 
+  }
+  if( ur_x != (580 << ( r_shift - 2 )) ){
+    abort_("Fail Test 1-1"); 
+  }
+  if( ur_y != (1024 << r_shift ) ){
+    abort_("Fail Test 1-1"); 
+  }
+
+  printf( "\t\tPass Test 1-1\n");
+
+  // bbox extra test 2 - invalid bbox left of screen
+  poly.v[0].x[0] = -1 << ( r_shift - 2 ); //v0.x
+  poly.v[0].x[1] = 1220 << ( r_shift ); //v0.y
+
+  poly.v[1].x[0] = -10 << ( r_shift - 2 ); //v1.x
+  poly.v[1].x[1] = 660 << ( r_shift - 2 ); //v1.y
+
+  poly.v[2].x[0] = -60 << ( r_shift - 2 ); //v2.x
+  poly.v[2].x[1] = 661 << ( r_shift - 2 ); //v2.y
+
+  poly.vertices = 3;
+
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+          screen_w, screen_h, valid, r_shift, r_val);
+
+  if( valid ){
+    abort_("Fail Test 1-2"); 
+  }
+
+  printf( "\t\tPass Test 1-2\n");
+
+  // bbox extra test 3 - invalid bbox top of screen
+  poly.v[0].x[0] = 1 << ( r_shift - 2 ); //v0.x
+  poly.v[0].x[1] = 1220 << ( r_shift ); //v0.y
+
+  poly.v[1].x[0] = 10 << ( r_shift - 2 ); //v1.x
+  poly.v[1].x[1] = 1660 << ( r_shift ); //v1.y
+
+  poly.v[2].x[0] = 60 << ( r_shift - 2 ); //v2.x
+  poly.v[2].x[1] = 1661 << ( r_shift ); //v2.y
+
+  poly.vertices = 3;
+
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+          screen_w, screen_h, valid, r_shift, r_val);
+
+  if( valid ){
+    abort_("Fail Test 1-3"); 
+  }
+
+  printf( "\t\tPass Test 1-3\n");
+
+  // bbox extra test 4 - invalid bbox complicated
+  poly.v[0].x[0] = -1 << ( r_shift - 2 ); //v0.x
+  poly.v[0].x[1] = -10 << ( r_shift - 2 ); //v0.y
+
+  poly.v[1].x[0] = -10 << ( r_shift - 2 ); //v1.x
+  poly.v[1].x[1] = -1660 << ( r_shift - 2); //v1.y
+
+  poly.v[2].x[0] = -60 << ( r_shift - 2 ); //v2.x
+  poly.v[2].x[1] = -1661 << ( r_shift - 2 ); //v2.y
+
+  poly.vertices = 3;
+
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+          screen_w, screen_h, valid, r_shift, r_val);
+
+  if( valid ){
+    abort_("Fail Test 1-4"); 
+  }
+
+  printf( "\t\tPass Test 1-4\n");
 
   /*
      If you are having trouble determining if your bounding

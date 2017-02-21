@@ -156,12 +156,35 @@ void rastBBox_bbox_fix(u_Poly< long, ushort >& poly,
 
   ///// PLACE YOUR CODE HERE
 
+  // calculating boundary box 
+  int vertexid = 1 ;
+  ur_x = poly.v[0].x[0];
+  ll_x = poly.v[0].x[0];
+  ur_y = poly.v[0].x[1];
+  ll_y = poly.v[0].x[1];
+  for(; vertexid < poly.vertices; vertexid ++ ) {
+    ur_x = max(poly.v[vertexid].x[0], ur_x);
+    ll_x = min(poly.v[vertexid].x[0], ll_x);
+    ur_y = max(poly.v[vertexid].x[1], ur_y);
+    ll_y = min(poly.v[vertexid].x[1], ll_y);
+  }
 
+  // clipping with screen
+  ur_x = min(ur_x, screen_w) ;
+  ll_x = max(ll_x, long(0)) ;
+  ur_y = min(ur_y, screen_h) ;
+  ll_y = max(ll_y, long(0)) ;
 
-
-
-
-
+  // validation and rounding
+  if (ur_x <= ll_x || ur_y <= ll_y) {
+    valid = false ;
+  } else {
+    valid = true;
+    ur_x = ( ur_x >> ( r_shift - ss_w_lg2 )) << ( r_shift - ss_w_lg2 ); 
+    ll_x = ( ll_x >> ( r_shift - ss_w_lg2 )) << ( r_shift - ss_w_lg2 ); 
+    ur_y = ( ur_y >> ( r_shift - ss_w_lg2 )) << ( r_shift - ss_w_lg2 ); 
+    ll_y = ( ll_y >> ( r_shift - ss_w_lg2 )) << ( r_shift - ss_w_lg2 ); 
+  }
 
   /////
   ///// Bounding Box Function Goes Here
