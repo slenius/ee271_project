@@ -99,25 +99,25 @@ bool testRast() {
   poly.v[3].x[0] = 580 << ( r_shift - 2 ); //v3.x
   poly.v[3].x[1] = 681 << ( r_shift - 2 ); //v.y
 
-  poly.vertices = 4; 
-  
-  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+  poly.vertices = 4;
+
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2,
           screen_w, screen_h, valid, r_shift, r_val);
 
   if( ! valid ){
-    abort_("Fail Test 1-1"); 
+    abort_("Fail Test 1-1");
   }
   if( ll_x != (0 << ( r_shift - 2 )) ){
-    abort_("Fail Test 1-1"); 
+    abort_("Fail Test 1-1");
   }
   if( ll_y != (660 << ( r_shift - 2 )) ){
-    abort_("Fail Test 1-1"); 
+    abort_("Fail Test 1-1");
   }
   if( ur_x != (580 << ( r_shift - 2 )) ){
-    abort_("Fail Test 1-1"); 
+    abort_("Fail Test 1-1");
   }
   if( ur_y != (1024 << r_shift ) ){
-    abort_("Fail Test 1-1"); 
+    abort_("Fail Test 1-1");
   }
 
   printf( "\t\tPass Test 1-1\n");
@@ -134,11 +134,11 @@ bool testRast() {
 
   poly.vertices = 3;
 
-  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2,
           screen_w, screen_h, valid, r_shift, r_val);
 
   if( valid ){
-    abort_("Fail Test 1-2"); 
+    abort_("Fail Test 1-2");
   }
 
   printf( "\t\tPass Test 1-2\n");
@@ -155,11 +155,11 @@ bool testRast() {
 
   poly.vertices = 3;
 
-  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2, 
+  rastBBox_bbox_fix(  poly, ll_x, ll_y, ur_x, ur_y, ss_w_lg2,
           screen_w, screen_h, valid, r_shift, r_val);
 
   if( valid ){
-    abort_("Fail Test 1-3"); 
+    abort_("Fail Test 1-3");
   }
 
   printf( "\t\tPass Test 1-3\n");
@@ -193,6 +193,19 @@ bool testRast() {
 
   printf("Test 2: SampleTest Test\n");
   poly.vertices = 3;
+  poly.v[0].x[0] = 556 << (r_shift - 2);   //v0.x
+  poly.v[0].x[1] = 679 << (r_shift - 2);   //v0.y
+
+  poly.v[1].x[0] = 562 << (r_shift - 2);   //v1.x
+  poly.v[1].x[1] = 660 << (r_shift - 2);   //v1.y
+
+  poly.v[2].x[0] = 557 << (r_shift - 2);   //v2.x
+  poly.v[2].x[1] = 661 << (r_shift - 2);   //v2.y
+
+  poly.v[3].x[0] = 561 << (r_shift - 2);   //v3.x
+  poly.v[3].x[1] = 680 << (r_shift - 2);   //v3.y
+
+  poly.vertices = 3; //The number of vertices
 
   s_x = 559 << (r_shift - 2);
   s_y = 662 << (r_shift - 2);
