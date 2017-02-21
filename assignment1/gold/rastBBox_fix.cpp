@@ -194,7 +194,7 @@ void rastBBox_bbox_fix(u_Poly< long, ushort >& poly,
 }
 
 
-#define DEBUG
+//#define DEBUG
 
 void debug_print_poly(u_Poly< long, ushort >& poly) {
   int i;
