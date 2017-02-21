@@ -2,6 +2,7 @@
 #include "rastBBox_fix.h"
 #include "assert.h"
 #include "limits.h"
+#include "helper.h"
 
 void rastBBox_vec_fix(vector< u_Poly< long, ushort > >& polys,
                       zbuff& z) {
@@ -170,6 +171,16 @@ void rastBBox_bbox_fix(u_Poly< long, ushort >& poly,
 }
 
 
+#define DEBUG
+
+void debug_print_poly(u_Poly< long, ushort >& poly) {
+  int i;
+  for (i=0; i<poly.vertices; i++){
+    fprintf(stderr, "poly %d: %ld, %ld\n", i,
+        poly.v[i].x[0],
+        poly.v[i].x[1]);
+  }
+}
 
 int rastBBox_stest_fix(u_Poly< long, ushort >& poly,
                        long s_x, long s_y) {
@@ -181,9 +192,8 @@ int rastBBox_stest_fix(u_Poly< long, ushort >& poly,
 
   /*
   /  Function: rastBBox_stest_fix
-  /  Function Description: Does the sameple point defined by s_x and s_y
-  /                                lie inside the micropolygon
-  /                                defined by poly
+  /  Function Description: Does the sample point defined by s_x and s_y
+  /                        lie inside the micropolygon defined by poly
   /  Inputs:
   /     u_Poly< long , ushort >& poly - A micropolygon.  Definition in helper.h
   /	long s_x - The fixed point value for the sample's x coordinate
@@ -196,34 +206,58 @@ int rastBBox_stest_fix(u_Poly< long, ushort >& poly,
   /     miss and 1 for hit
   /
   */
+  /****************************************************************************/
+  /****************************************************************************/
 
+  int result = 1 ; // Default to hit state
+  int i;
+  int j;
+  long edge_dist_to_origin[4];
+  bool edge_ok[4];
+  long s[2] = {s_x, s_y};
 
+  // A new polygon that we run the tests against - this polygon is referenced
+  // to the origin based on s_x and s_y
+  u_Poly< long, ushort > poly_origin;
+  poly_origin.vertices = poly.vertices;
 
-  int result = 0 ; // Default to miss state
+  // First re-reference the polygon to the origin
+  for (i=0; i<poly.vertices; i++){
+    for (j=0; j<2; j++){
+      poly_origin.v[i].x[j] = poly.v[i].x[j] - s[j];
+    }
+  }
 
-  /////
-  ///// Sample Test Function Goes Here
-  /////
+  // Evaluate the distance of each edge to the origin
+  for (i=0; i<poly_origin.vertices; i++){
+    j = (i + 1) % poly_origin.vertices;
+    edge_dist_to_origin[i] =
+      poly_origin.v[i].x[0] * poly_origin.v[j].x[1] -
+      poly_origin.v[j].x[0] * poly_origin.v[i].x[1];
+  }
 
-  ///// PLACE YOUR CODE HERE
+  // For each edge, test if the origin is to the right of the edge
+  for (i=0; i<poly_origin.vertices; i++){
+    edge_ok[i] = edge_dist_to_origin[i] <= 0;
+  }
 
+  // For each edge and the result and ok to return overall ok
+  for (i=0; i<poly_origin.vertices; i++){
+    result = result && edge_ok[i];
+  }
 
+  #ifdef DEBUG
+  debug_print_poly(poly);
+  fprintf(stderr, "sample: %ld, %ld\n", s_x, s_y);
+  debug_print_poly(poly_origin);
+  for (i=0; i<poly.vertices; i++){
+    fprintf(stderr, "edge_dist %d: %ld\n", i, edge_dist_to_origin[i]);
+    fprintf(stderr, "edge_ok %d: %d\n", i, edge_ok[i]);
+  }
+  #endif
 
-
-
-
-
-
-
-
-
-
-
-  /////
-  ///// Sample Test Function Goes Here
-  /////
-
-
+  /****************************************************************************/
+  /****************************************************************************/
   return (result-1); //Return 0 if hit, otherwise return -1
 }
 

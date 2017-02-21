@@ -55,6 +55,8 @@ void rastBBox_uPoly_fix(u_Poly< long, ushort >& poly,
                         long r_val);
 
 
+void debug_print_poly(u_Poly< long, ushort >& poly);
+
 int rastBBox_stest_fix(u_Poly< long, ushort >& poly, long s_x, long s_y);
 
 void rastBBox_jhash_jit_fix(
