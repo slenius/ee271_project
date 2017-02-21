@@ -364,13 +364,13 @@ int main(int argc, char **argv) {
   printf("%i\n", size_s);
 
   // Initialize a Depth Buffer
-  //zbuff z(w,h,ss);
+  zbuff z(w,h,ss);
 
   // Rasterize the Scene
-  //rastBBox_vec_fix(polys, z);
+  rastBBox_vec_fix(polys, z);
 
   // Write the Zbuffer to a png
-  //z.write_ppm(argv[1]);
+  z.write_ppm(argv[1]);
 
   return 0;
 }
