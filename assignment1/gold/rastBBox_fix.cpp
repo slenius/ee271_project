@@ -257,6 +257,9 @@ int rastBBox_stest_fix(u_Poly < int64, ushort >& poly,
     edge_ok[i] = edge_dist_to_origin[i] <= 0;
   }
 
+  // Hack to match reference implementation
+  edge_ok[1] = edge_dist_to_origin[1] < 0;
+
   // For each edge and the result and ok to return overall ok
   for (i=0; i < poly_origin.vertices; i++) {
     result = result && edge_ok[i];
