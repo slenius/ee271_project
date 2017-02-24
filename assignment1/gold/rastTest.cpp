@@ -132,8 +132,6 @@ bool testRast() {
   long ur_y;
   bool valid;
 
-  long s_x, s_y;
-  int hit;
 
   printf("Test 1: Bounding Box Test\n");
   poly.vertices = 3;
@@ -274,14 +272,17 @@ bool testRast() {
   u_Poly< long, ushort > tri1;
   u_Poly< long, ushort > tri2;
 
-  // 1,5       5,5
-  // *-------->*
-  // ^         |
-  // |         |
-  // |         |
-  // | *2,2    v
-  // *<--------*
-  // 1,1       5,1
+  /*
+     1,5       5,5
+     *-------->*
+     ^         |
+     |         |
+     |         |
+     | *2,2    v
+     *<--------*
+     1,1       5,1
+  */
+
   buildQuad(quad1,
             1, 1,
             1, 5,
@@ -296,13 +297,16 @@ bool testRast() {
             561, 680,
             r_shift);
 
-  // * 1,5     * 10,10
-  // ^\
-  // |  \  * 3,3
-  // |    \
-  // | *2,2 >
-  // *<------*
-  // 1,1          5,1
+  /*
+     * 1,5     * 10,10
+     ^\
+     |  \  * 3,3
+     |    \
+     | *2,2 >
+     *<------*
+     1,1          5,1
+  */
+
   buildTri(tri1,
            1, 1,
            1, 5,
