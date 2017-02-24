@@ -329,8 +329,7 @@ bool testRast() {
   RunSTestExpectPass(tri2, "Sample Test Tri 2", 559, 662, r_shift);
   RunSTestExpectFail(tri2, "Sample Test Tri 3", 560, 678, r_shift);
 
-  RunSTestExpectPass(quad2, "Sample Test Quad 2", 559, 662, r_shift);
-  RunSTestExpectFail(quad2, "Sample Test Quad 3", 560, 678, r_shift);
+  RunSTestExpectFail(quad2, "Sample Test Quad 2", 560, 678, r_shift);
 
   return true;
 }
@@ -360,8 +359,11 @@ int main(int argc, char **argv) {
 
   int size_s = (int)polys.size();
 
+  // Print filename
+  printf("file = %s\n", argv[2]);
+
   // Report Number of polygons
-  printf("%i\n", size_s);
+  printf("n_poly = %i\n", size_s);
 
   // Initialize a Depth Buffer
   zbuff z(w,h,ss);
