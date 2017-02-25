@@ -56,7 +56,7 @@ int rastBBox_bbox_check(int   v0_x,      //uPoly
   ll_x = poly.v[0].x[0];
   ur_y = poly.v[0].x[1];
   ll_y = poly.v[0].x[1];
-  for (; vertexid < poly.vertices; vertexid ++) {
+  for (; vertexid < poly.q; vertexid ++) {
     ur_x = max(poly.v[vertexid].x[0], ur_x);
     ll_x = min(poly.v[vertexid].x[0], ll_x);
     ur_y = max(poly.v[vertexid].x[1], ur_y);
@@ -65,9 +65,9 @@ int rastBBox_bbox_check(int   v0_x,      //uPoly
 
   // clipping with screen
   ur_x = min(ur_x, screen_w);
-  ll_x = max(ll_x, static_cast<int64>(0));
+  ll_x = max(ll_x, (int64)(0));
   ur_y = min(ur_y, screen_h);
-  ll_y = max(ll_y, static_cast<int64>(0));
+  ll_y = max(ll_y, (int64)(0));
 
   // validation and rounding
   if (ur_x <= ll_x || ur_y <= ll_y) {
@@ -175,26 +175,26 @@ int rastBBox_stest_check(int   v0_x,       //uPoly
 
   // A new polygon that we run the tests against - this polygon is referenced
   // to the origin based on s_x and s_y
-  u_Poly < int64, ushort > poly_origin;
-  poly_origin.vertices = poly.vertices;
+  u_Poly poly_origin;
+  poly_origin.q = poly.q;
 
   // First re-reference the polygon to the origin
-  for (i = 0; i < poly.vertices; i++) {
+  for (i = 0; i < poly.q; i++) {
     for (j = 0; j < 2; j++) {
       poly_origin.v[i].x[j] = poly.v[i].x[j] - s[j];
     }
   }
 
   // Evaluate the distance of each edge to the origin
-  for (i = 0; i < poly_origin.vertices; i++) {
-    j = (i + 1) % poly_origin.vertices;
+  for (i = 0; i < poly_origin.q; i++) {
+    j = (i + 1) % poly_origin.q;
     edge_dist_to_origin[i] =
       poly_origin.v[i].x[0] * poly_origin.v[j].x[1] -
       poly_origin.v[j].x[0] * poly_origin.v[i].x[1];
   }
 
   // For each edge, test if the origin is to the right of the edge
-  for (i=0; i < poly_origin.vertices; i++) {
+  for (i=0; i < poly_origin.q; i++) {
     edge_ok[i] = edge_dist_to_origin[i] <= 0 ? 1 : 0;
   }
 
@@ -202,11 +202,11 @@ int rastBBox_stest_check(int   v0_x,       //uPoly
   edge_ok[1] = edge_dist_to_origin[1] < 0 ? 1 : 0;
 
   // For each edge and the result and ok to return overall ok
-  for (i=0; i < poly_origin.vertices; i++) {
+  for (i=0; i < poly_origin.q; i++) {
     result = (result + edge_ok[i] == 2) ? 1 : 0;
   }
 
-  result = result - 1
+  result = result - 1;
   //
   //Copy Past C++ Sample Test Function ****END****
   //
@@ -262,7 +262,7 @@ int rastBBox_check(int   v0_x,       //uPoly
   ll_x = poly.v[0].x[0];
   ur_y = poly.v[0].x[1];
   ll_y = poly.v[0].x[1];
-  for (; vertexid < poly.vertices; vertexid ++) {
+  for (; vertexid < poly.q; vertexid ++) {
     ur_x = max(poly.v[vertexid].x[0], ur_x);
     ll_x = min(poly.v[vertexid].x[0], ll_x);
     ur_y = max(poly.v[vertexid].x[1], ur_y);
@@ -271,9 +271,9 @@ int rastBBox_check(int   v0_x,       //uPoly
 
   // clipping with screen
   ur_x = min(ur_x, screen_w);
-  ll_x = max(ll_x, static_cast<int64>(0));
+  ll_x = max(ll_x, (int64)(0));
   ur_y = min(ur_y, screen_h);
-  ll_y = max(ll_y, static_cast<int64>(0));
+  ll_y = max(ll_y, (int64)(0));
 
   // validation and rounding
   if (ur_x <= ll_x || ur_y <= ll_y) {
@@ -317,26 +317,26 @@ int rastBBox_check(int   v0_x,       //uPoly
 
       // A new polygon that we run the tests against - this polygon is referenced
       // to the origin based on s_x and s_y
-      u_Poly < int64, ushort > poly_origin;
-      poly_origin.vertices = poly.vertices;
+      u_Poly poly_origin;
+      poly_origin.q = poly.q;
 
       // First re-reference the polygon to the origin
-      for (i = 0; i < poly.vertices; i++) {
+      for (i = 0; i < poly.q; i++) {
         for (j = 0; j < 2; j++) {
           poly_origin.v[i].x[j] = poly.v[i].x[j] - s[j];
         }
       }
 
       // Evaluate the distance of each edge to the origin
-      for (i = 0; i < poly_origin.vertices; i++) {
-        j = (i + 1) % poly_origin.vertices;
+      for (i = 0; i < poly_origin.q; i++) {
+        j = (i + 1) % poly_origin.q;
         edge_dist_to_origin[i] =
           poly_origin.v[i].x[0] * poly_origin.v[j].x[1] -
           poly_origin.v[j].x[0] * poly_origin.v[i].x[1];
       }
 
       // For each edge, test if the origin is to the right of the edge
-      for (i=0; i < poly_origin.vertices; i++) {
+      for (i=0; i < poly_origin.q; i++) {
         edge_ok[i] = edge_dist_to_origin[i] <= 0 ? 1 : 0;
       }
 
@@ -344,11 +344,11 @@ int rastBBox_check(int   v0_x,       //uPoly
       edge_ok[1] = edge_dist_to_origin[1] < 0 ? 1 : 0;
 
       // For each edge and the result and ok to return overall ok
-      for (i=0; i < poly_origin.vertices; i++) {
+      for (i=0; i < poly_origin.q; i++) {
         result = (result + edge_ok[i] == 2) ? 1 : 0;
       }
 
-      result = result - 1
+      result = result - 1;
       //
       //Copy Past C++ Sample Test Function ****END****
       //

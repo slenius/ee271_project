@@ -17,6 +17,7 @@
 typedef unsigned char uchar ;
 typedef unsigned short ushort ;
 typedef unsigned int  uint;
+typedef long int64;
 
 const char kQuadCullBackHits_fix[] = {
   0, 0, 1, 0, 1, 0, 0, 1,
