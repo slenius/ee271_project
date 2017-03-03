@@ -156,33 +156,37 @@ module  `mname()`
   // position.
 
   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
-  //;  for( my $j = 0 ; $j < 2 ; $j++ ) {
+  //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
   always_comb begin
-    poly_shift_R16S[`$i`][`$j`] = 0;
+    poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
   end
-  //;  }
+  //;   }
   //; }
 
   //// (2) Organize edges (form three edges for triangles)
-
   always_comb begin
     // assign edge_R16S
+    // TODO(sam) Unsure what needs to be done here if anything...
   end
 
   //// (3) Calculate distance x_1 * y_2 - x_2 * y_1
-
+  //; for( my $i = 0 ; $i < $edges ; $i++ ) {
+  //;   my $j = ($i + 1) % ($verts);
   always_comb begin
-    // assign dist_lg_R16S
+    dist_lg_R16S[`$i`] = poly_shift_R16S[`$i`][0] * poly_shift_R16S[`$j`][1] -
+                         poly_shift_R16S[`$j`][0] * poly_shift_R16S[`$i`][0];
   end
+  //; }
 
   //// (4) Check distance and assign hit_valid_R16H.
-
   always_comb begin
     // assign hit_valid_R16H
+    hit_valid_R16H = (dist_lg_R16S[0] <= 0) &&
+                     (dist_lg_R16S[1] < 0) &&
+                     (dist_lg_R16S[2] <= 0);
   end
 
   //////// END YOUR IMPLEMENTATION
-
 
 
   //; } elsif( $edges == 5 ) {
@@ -194,7 +198,7 @@ module  `mname()`
 
 
   //Calculate Depth as depth of first vertex
-  // Note that a barrycentric interpolation would
+  // Note that a baricentric interpolation would
   // be more accurate
   //; if( $verts == 3) {
   always_comb begin
@@ -204,7 +208,7 @@ module  `mname()`
     hit_R16S[2] = poly_R16S[0][2];
   end
   //; }
-  //TODO: Calculate Depth by berrycentric intropolation
+  //TODO: Calculate Depth by baricentric intropolation
 
 
   /* Flop R16 to R18_retime with retiming registers*/
