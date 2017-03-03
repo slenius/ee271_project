@@ -91,33 +91,53 @@
 
 module  `mname()`
   (
-   input logic signed [`$sig_fig`-1:0]  poly_R16S[`$verts`-1:0][`$axis`-1:0], // Micropolygon to Iterate Over
-   input logic 			 unsigned [`$sig_fig`-1:0] color_R16U[`$colors`-1:0] , // Color of Poly
-   input logic signed [`$sig_fig`-1:0]  sample_R16S[1:0], // Sample Location
-   input logic 			 validSamp_R16H, // A valid sample location
-   input logic 			 isQuad_R16H, //Micropolygon is quad
+    // Micropolygon to Iterate Over
+    input logic   signed [`$sig_fig`-1:0] poly_R16S[`$verts`-1:0][`$axis`-1:0],
+    // Color of Poly
+    input logic   unsigned [`$sig_fig`-1:0] color_R16U[`$colors`-1:0] ,
+    // Sample Location
+    input logic   signed [`$sig_fig`-1:0]  sample_R16S[1:0],
+    // A valid sample location
+    input logic   validSamp_R16H,
+    //Micropolygon is quad
+    input logic   isQuad_R16H,
 
-   input logic 			 clk, // Clock
-   input logic 			 rst, // Reset
+    // Clock
+    input logic   clk,
+    // Reset
+    input logic   rst,
 
-   output logic signed [`$sig_fig`-1:0] hit_R18S[`$axis`-1:0], // Hit Location
-   output logic 			 unsigned [`$sig_fig`-1:0] color_R18U[`$colors`-1:0] , // Color of Poly
-   output logic 			 hit_valid_R18H             // Is hit good
+    // Hit Location
+    output logic  signed [`$sig_fig`-1:0] hit_R18S[`$axis`-1:0],
+    // Color of Poly
+    output logic  unsigned [`$sig_fig`-1:0] color_R18U[`$colors`-1:0],
+    // Is hit good
+    output logic  hit_valid_R18H
    );
 
-  // output for retiming registers
-  logic signed [`$sig_fig`-1:0] 	 hit_R18S_retime[`$axis`-1:0];  // Hit Location
-  logic 				 unsigned [`$sig_fig`-1:0]  color_R18U_retime[`$colors`-1:0];  // Color of Poly
-  logic 				 hit_valid_R18H_retime;  // Is hit good
-  // output for retiming registers
+  /**************** Output for retiming registers *****************************/
+  // Hit Location
+  logic signed [`$sig_fig`-1:0] hit_R18S_retime[`$axis`-1:0];
+  // Color of Poly
+  logic unsigned [`$sig_fig`-1:0]  color_R18U_retime[`$colors`-1:0];
+  // Is hit good
+  logic hit_valid_R18H_retime;
+  /**************** Output for retiming registers *****************************/
 
-  // Signals in Access Order
-  logic signed [`$sig_fig`-1:0] 	 poly_shift_R16S[`$verts`-1:0][1:0]; // Micropolygon after coordinate shift
-  logic signed [`$sig_fig`-1:0] 	 edge_R16S[`$edges`-1:0][1:0][1:0]; // Edges
-  logic signed [2*`$shortSF`-1:0] 	 dist_lg_R16S[`$edges`-1:0]; // Result of x_1 * y_2 - x_2 * y_1
-  logic 				 hit_valid_R16H ; // Output (YOUR JOB!)
-  logic signed [`$sig_fig`-1:0] 	 hit_R16S[`$axis`-1:0]; // Sample position
-  // Signals in Access Order
+  /**************** Signals in Access Order ***********************************/
+  // Micropolygon after coordinate shift
+  logic signed [`$sig_fig`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
+
+  // Edges
+  logic signed [`$sig_fig`-1:0]   edge_R16S[`$edges`-1:0][1:0][1:0];
+
+  // Result of x_1 * y_2 - x_2 * y_1
+  logic signed [2*`$shortSF`-1:0] dist_lg_R16S[`$edges`-1:0];
+  // Output (YOUR JOB!)
+  logic 			  hit_valid_R16H ;
+  // Sample position
+  logic signed [`$sig_fig`-1:0] 	 hit_R16S[`$axis`-1:0];
+  /**************** Signals in Access Order ***********************************/
 
   //////// DECLARE OTHER INTERMEDIATE SIGNALS YOU NEED
 
@@ -132,7 +152,8 @@ module  `mname()`
   // (with back face culling)
   // Consider the following steps:
 
-  // (1) Shift X, Y coordinates such that the fragment resides on the (0,0) position.
+  // (1) Shift X, Y coordinates such that the fragment resides on the (0,0)
+  // position.
 
   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
   //;  for( my $j = 0 ; $j < 2 ; $j++ ) {
@@ -166,7 +187,7 @@ module  `mname()`
 
   //; } elsif( $edges == 5 ) {
   always_comb begin
-    assert( 0 ) else $fatal( "Sample test unit not configured for 4 Vertices\n");
+    assert( 0 ) else $fatal("Sample test unit not configured for 4 Vertices\n");
   end
   //; }
 
@@ -177,8 +198,10 @@ module  `mname()`
   // be more accurate
   //; if( $verts == 3) {
   always_comb begin
-    hit_R16S[1:0] = sample_R16S[1:0]; //Make sure you use unjittered sample
-    hit_R16S[2] = poly_R16S[0][2]; // z value equals the z value of the first vertex
+    //Make sure you use unjittered sample
+    hit_R16S[1:0] = sample_R16S[1:0];
+    // z value equals the z value of the first vertex
+    hit_R16S[2] = poly_R16S[0][2];
   end
   //; }
   //TODO: Calculate Depth by berrycentric intropolation
