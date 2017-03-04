@@ -187,7 +187,10 @@ module `mname()`
    //////// DECLARE OTHER SIGNALS YOU NEED
 
    //R10 Signals
-   
+   logic unsigned [`$verts`-1:0] maxvertid_R10U [1:0];
+   logic unsigned [`$verts`-1:0] minvertid_R10U [1:0];
+   logic bboxvalid_R10H;
+
    // output for retiming registers
    logic signed [`$sig_fig`-1:0] 	poly_R13S_retime[`$verts`-1:0][`$axis`-1:0]; // 4 Sets X,Y Fixed Point Values
    logic 				unsigned [`$sig_fig`-1:0] color_R13U_retime[`$colors`-1:0];        // Color of Poly
@@ -220,6 +223,53 @@ module `mname()`
    //////// PLACE YOUR CODE HERE
    //////// ASSIGN VALUES TO "box_R10S"
 
+   // find max vertex id for x
+   maxvertid_R10U[0][0] = (poly_R10S[0][0] >= poly_R10S[1][0]) & (poly_R10S[0][0] >= poly_R10S[2][0]);
+   maxvertid_R10U[0][1] = (poly_R10S[1][0] > poly_R10S[0][0]) & (poly_R10S[1][0] >= poly_R10S[2][0]);
+   maxvertid_R10U[0][2] = (poly_R10S[2][0] > poly_R10S[0][0]) & (poly_R10S[2][0] > poly_R10S[1][0]);
+
+   // find max vertex id for y
+   maxvertid_R10U[1][0] = (poly_R10S[0][1] >= poly_R10S[1][1]) & (poly_R10S[0][1] >= poly_R10S[2][1]);
+   maxvertid_R10U[1][1] = (poly_R10S[1][1] > poly_R10S[0][1]) & (poly_R10S[1][1] >= poly_R10S[2][1]);
+   maxvertid_R10U[1][2] = (poly_R10S[2][1] > poly_R10S[0][1]) & (poly_R10S[2][1] > poly_R10S[1][1]);
+
+   // find min vertex id for x
+   minvertid_R10U[0][0] = (poly_R10S[0][0] <= poly_R10S[1][0]) & (poly_R10S[0][0] <= poly_R10S[2][0]);
+   minvertid_R10U[0][1] = (poly_R10S[1][0] < poly_R10S[0][0]) & (poly_R10S[1][0] <= poly_R10S[2][0]);
+   minvertid_R10U[0][2] = (poly_R10S[2][0] < poly_R10S[0][0]) & (poly_R10S[2][0] < poly_R10S[1][0]);
+
+   // find min vertex id for y
+   minvertid_R10U[1][0] = (poly_R10S[0][1] <= poly_R10S[1][1]) & (poly_R10S[0][1] <= poly_R10S[2][1]);
+   minvertid_R10U[1][1] = (poly_R10S[1][1] < poly_R10S[0][1]) & (poly_R10S[1][1] <= poly_R10S[2][1]);
+   minvertid_R10U[1][2] = (poly_R10S[2][1] < poly_R10S[0][1]) & (poly_R10S[2][1] < poly_R10S[1][1]);
+
+   // assign min_x to LL X of box
+   unique case (minvertid_R10[0])
+      (3'b100) : box_R10S[0][0] = poly_R10S[2][0];
+      (3'b010) : box_R10S[0][0] = poly_R10S[1][0];
+      (3'b001) : box_R10S[0][0] = poly_R10S[0][0];
+   endcase
+
+   // assign min_y to LL Y of box
+   unique case (minvertid_R10U[1])
+      (3'b100) : box_R10S[0][1] = poly_R10S[2][1];
+      (3'b010) : box_R10S[0][1] = poly_R10S[1][1];
+      (3'b001) : box_R10S[0][1] = poly_R10S[0][1];
+   endcase
+
+   // assign max_x to UR X of box
+   unique case (maxvertid_R10U[0])
+      (3'b100) : box_R10S[1][0] = poly_R10S[2][0];
+      (3'b010) : box_R10S[1][0] = poly_R10S[1][0];
+      (3'b001) : box_R10S[1][0] = poly_R10S[0][0];
+   endcase
+
+   // assign max_y to UR R of box
+   unique case (maxvertid_R10U[1])
+      (3'b100) : box_R10S[1][1] = poly_R10S[2][1];
+      (3'b010) : box_R10S[1][1] = poly_R10S[1][1];
+      (3'b001) : box_R10S[1][1] = poly_R10S[0][1];
+   endcase
    end
 
    //; }  
@@ -257,7 +307,21 @@ module `mname()`
 
       //////// PLACE YOUR CODE HERE
       //////// ASSIGN FRACTION PORTION
-
+      unique case(subSample_RnnnnU)
+      (4'b1000): rounded_box_R10S[`$i`][`$j`][`radix` - 1: 0] = 0;
+      (4'b0100): begin 
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 1:] = box_R10S[`$i`][`$j`][`radix` - 1];
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 2: 0] = 0;
+                 end
+      (4'b0010): begin
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 1: `radix` - 2] = box_R10S[`$i`][`$j`][`radix` - 1: `radix` - 2];
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 3: 0] = 0;
+                 end
+      (4'b0001): begin
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 1: `radix` - 3] = box_R10S[`$i`][`$j`][`radix` - 1: `radix` - 3];
+                  rounded_box_R10S[`$i`][`$j`][`radix` - 4: 0] = 0;
+                 end
+      endcase
       
    end // always_comb
 
@@ -280,6 +344,13 @@ module `mname()`
       //////// PLACE YOUR CODE HERE
       //////// ASSIGN "out_box_R10S" and "outvalid_R10H"
 
+      out_box_R10S[0][0] = (rounded_box_R10S[0][0] > 0) ? rounded_box_R10S[0][0] : 0;
+      out_box_R10S[0][1] = (rounded_box_R10S[0][1] > 0) ? rounded_box_R10S[0][1] : 0;
+      out_box_R10S[1][0] = (rounded_box_R10S[1][0] < screen_RnnnnS[0]) ? rounded_box_R10S[1][0] : screen_RnnnnS[0];
+      out_box_R10S[1][1] = (rounded_box_R10S[1][1] < screen_RnnnnS[1]) ? rounded_box_R10S[1][1] : screen_RnnnnS[1];
+      bboxvalid_R10H = (out_box_R10S[1][0] > out_box_R10S[0][0]) & (out_box_R10S[1][1] > out_box_R10S[0][1])
+      outvalid_R10H = validPoly_R10H & bboxvalid_R10H
+      
    end
 
    // ***************** End of Step 3 *********************
