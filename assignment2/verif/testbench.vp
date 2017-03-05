@@ -508,8 +508,8 @@ task ProcessArgs;
       end
     else
       begin
-        //timeout=50000000 ;
-        timeout=50000 ;
+        timeout=50000000 ;
+        //timeout=50000 ;
         $display( "Simulation will timout after %0d cycles", timeout );
       end
 

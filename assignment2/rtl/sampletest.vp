@@ -157,6 +157,7 @@ module  `mname()`
 
   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
   //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+  // Spot checked correct - SL
   always_comb begin
     poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
   end
@@ -172,18 +173,20 @@ module  `mname()`
   //// (3) Calculate distance x_1 * y_2 - x_2 * y_1
   //; for( my $i = 0 ; $i < $edges ; $i++ ) {
   //;   my $j = ($i + 1) % ($verts);
+  // Spot checked correct - SL
   always_comb begin
     dist_lg_R16S[`$i`] = poly_shift_R16S[`$i`][0] * poly_shift_R16S[`$j`][1] -
-                         poly_shift_R16S[`$j`][0] * poly_shift_R16S[`$i`][0];
+                         poly_shift_R16S[`$j`][0] * poly_shift_R16S[`$i`][1];
   end
   //; }
 
   //// (4) Check distance and assign hit_valid_R16H.
   always_comb begin
     // assign hit_valid_R16H
-    hit_valid_R16H = (dist_lg_R16S[0] <= 0) &&
-                     (dist_lg_R16S[1] < 0) &&
-                     (dist_lg_R16S[2] <= 0);
+    // Spot checked correct - SL
+    hit_valid_R16H = ($signed(dist_lg_R16S[0]) <= $signed(2*`$shortSF`'b0)) &&
+                     ($signed(dist_lg_R16S[1]) <  $signed(2*`$shortSF`'b0)) &&
+                     ($signed(dist_lg_R16S[2]) <= $signed(2*`$shortSF`'b0));
   end
 
   //////// END YOUR IMPLEMENTATION
