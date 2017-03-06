@@ -155,9 +155,9 @@ module  `mname()`
   // (1) Shift X, Y coordinates such that the fragment resides on the (0,0)
   // position.
 
+  // Spot checked correct - SL
   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
   //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
-  // Spot checked correct - SL
   always_comb begin
     poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
   end
@@ -170,20 +170,20 @@ module  `mname()`
     // TODO(sam) Unsure what needs to be done here if anything...
   end
 
+  // Spot checked correct - SL
   //// (3) Calculate distance x_1 * y_2 - x_2 * y_1
   //; for( my $i = 0 ; $i < $edges ; $i++ ) {
   //;   my $j = ($i + 1) % ($verts);
-  // Spot checked correct - SL
   always_comb begin
     dist_lg_R16S[`$i`] = poly_shift_R16S[`$i`][0] * poly_shift_R16S[`$j`][1] -
                          poly_shift_R16S[`$j`][0] * poly_shift_R16S[`$i`][1];
   end
   //; }
 
+  // Spot checked correct - SL
   //// (4) Check distance and assign hit_valid_R16H.
   always_comb begin
     // assign hit_valid_R16H
-    // Spot checked correct - SL
     hit_valid_R16H = ($signed(dist_lg_R16S[0]) <= $signed(2*`$shortSF`'b0)) &&
                      ($signed(dist_lg_R16S[1]) <  $signed(2*`$shortSF`'b0)) &&
                      ($signed(dist_lg_R16S[2]) <= $signed(2*`$shortSF`'b0));

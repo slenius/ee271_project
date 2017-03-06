@@ -521,7 +521,8 @@ task ProcessArgs;
       end
     else
       begin
-        testname="tests/sample_test.dat";
+        //testname="tests/sample_test.dat";
+        testname="../vect/vec_271_01_sv.dat";
         $display( "Simulation will use test file %s", testname );
       end
 
