@@ -190,6 +190,7 @@ module `mname()`
    logic unsigned [`$verts`-1:0] maxvertid_R10U [1:0];
    logic unsigned [`$verts`-1:0] minvertid_R10U [1:0];
    logic bboxvalid_R10H;
+   logic backfaced_poly_R10H;
 
    // output for retiming registers
    logic signed [`$sig_fig`-1:0] 	poly_R13S_retime[`$verts`-1:0][`$axis`-1:0]; // 4 Sets X,Y Fixed Point Values
@@ -359,8 +360,11 @@ module `mname()`
                           (rounded_box_R10S[`$U`][`$X`] < `$sig_fig`'b0) ||
                           (rounded_box_R10S[`$U`][`$Y`] < `$sig_fig`'b0));
 
+      backfaced_poly_R10H = (((poly_R10S[1][0] - poly_R10S[0][0]) * (poly_R10S[2][1] - poly_R10S[1][1]) - 
+                            (poly_R10S[2][0] - poly_R10S[1][0]) * (poly_R10S[1][1] - poly_R10S[0][1])) > 0);
+
       // If the box and polygon are both valid, the output is valid
-      outvalid_R10H = validPoly_R10H && bboxvalid_R10H;
+      outvalid_R10H = validPoly_R10H && bboxvalid_R10H && ( ~ backfaced_poly_R10H);
    end
 
    // ***************** End of Step 3 *********************
