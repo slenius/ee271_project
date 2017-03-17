@@ -16,6 +16,12 @@ class zbuff
   int ss_w ; // sqrt of super sampling
   int ss_w_lg2 ; // log 2 of the sqrt of sampling
   double ss_i ; // subsample interval
+  int numPoly ;
+  int numBackFacedPoly ;
+  int numInvalidBboxPoly ;
+  long totalSizeBbox;
+  int countBbox;
+  long maxBboxHeight;
 
  private:
   ushort* frame_buffer ;
