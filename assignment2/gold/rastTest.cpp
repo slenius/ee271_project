@@ -162,12 +162,22 @@ int main(int argc, char **argv)
   
   //Initialize a Depth Buffer
   zbuff z(w,h,ss);
+  z.numPoly = size_s;
 
   //Rasterize the Scene
   rastBBox_vec_fix( polys , z );
 
   //Write the Zbuffer to a png
   z.write_ppm( argv[1] );
+  printf("###ANALYSIS-filename %s\n", argv[2]);
+  printf("###ANALYSIS-numPoly %i\n", z.numPoly);
+  printf("###ANALYSIS-numBackFacedPoly %i\n", z.numBackFacedPoly);
+  printf("###ANALYSIS-numInvalidBboxPoly %i\n", z.numInvalidBboxPoly);
+  printf("###ANALYSIS-avgBboxSize %ld\n", z.totalSizeBbox / z.countBbox);
+  printf("###ANALYSIS-countBbox %i\n", z.countBbox);
+  printf("###ANALYSIS-totalSizeBbox %ld\n", z.totalSizeBbox);
+  printf("###ANALYSIS-maxBboxHeight %ld\n", z.maxBboxHeight);
+
 
   return 0;
 }

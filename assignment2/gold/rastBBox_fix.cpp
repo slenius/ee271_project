@@ -54,6 +54,18 @@ void rastBBox_uPoly_fix( u_Poly< long , ushort >& poly,
 		     z.ss_w_lg2, screen_w, screen_h, 
 		     valid, r_shift, r_val  );
 
+  if(isBackFacedPoly(poly)) {
+     z.numBackFacedPoly = z.numBackFacedPoly + 1;
+  } else {
+    if(valid) {
+      z.countBbox = z.countBbox + 1;
+      z.totalSizeBbox = z.totalSizeBbox + ((ur_x - ll_x) >> ( r_shift - z.ss_w_lg2 )) * ((ur_y - ll_y) >> ( r_shift - z.ss_w_lg2 )) ;
+      z.maxBboxHeight = std::max((ur_x - ll_x) >> ( r_shift - z.ss_w_lg2 ), z.maxBboxHeight) ;
+    } else {
+      z.numInvalidBboxPoly = z.numInvalidBboxPoly + 1;
+    }
+  }
+
   //Iterate over Samples, Test if In uPoly
   for( s_x = ll_x ; s_x <= ur_x ; s_x += si ){
     for( s_y = ll_y ; s_y <= ur_y ; s_y += si ){
@@ -229,6 +241,9 @@ void rastBBox_bbox_fix( u_Poly< long , ushort >& poly ,
   valid = ll_x >= screen_w ? false : valid ;
   valid = ll_y >= screen_h ? false : valid ;
 
+  if(isBackFacedPoly(poly)) {
+    valid = false;
+  }
   /////
   ///// Bounding Box Function Goes Here
   ///// 
@@ -393,4 +408,8 @@ void rastBBox_jhash_jit_fix(
 
 }
 
+// helper function calculating if this poly is backfaced
+bool isBackFacedPoly(u_Poly< long , ushort >& poly) {
+  return (poly.v[1].x[0] - poly.v[0].x[0]) * (poly.v[2].x[1] - poly.v[1].x[1]) - (poly.v[2].x[0] - poly.v[1].x[0]) * (poly.v[1].x[1] - poly.v[0].x[1]) > 0 ;
+}
 

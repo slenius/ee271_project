@@ -63,3 +63,5 @@ void rastBBox_jhash_jit_fix(
 			      const long& ss_w_lg2,
 			      long* jitter_x,
 			      long* jitter_y);
+
+bool isBackFacedPoly(u_Poly< long , ushort >& poly);

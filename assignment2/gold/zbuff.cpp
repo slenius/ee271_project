@@ -20,6 +20,12 @@ zbuff::zbuff( int w_in , int h_in , int ss_in )
   w = w_in ;
   h = h_in ; 
   ss = ss_in ; 
+  numPoly = 0;
+  numBackFacedPoly = 0;
+  numInvalidBboxPoly = 0;
+  totalSizeBbox = 0;
+  countBbox = 0;
+  maxBboxHeight = 0;
 
   switch( ss )
   {
