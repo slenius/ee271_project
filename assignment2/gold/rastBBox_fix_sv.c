@@ -55,6 +55,7 @@ int rastBBox_bbox_check( int   v0_x,     //uPoly
 
   int b_x[6] ;
   int b_y[6] ;
+  int isbackface;
 
   //Calculate BBox
   b_x[0] = poly.v[0].x[0] < poly.v[1].x[0];
@@ -111,13 +112,14 @@ int rastBBox_bbox_check( int   v0_x,     //uPoly
   ll_x = ll_x < 0   ? 0   : ll_x ;
   ll_y = ll_y < 0   ? 0   : ll_y ;
 
-  /*
+  isbackface = ((poly.v[1].x[0] - poly.v[0].x[0]) * (poly.v[2].x[1] - poly.v[1].x[1]) - (poly.v[2].x[0] - poly.v[1].x[0]) * (poly.v[1].x[1] - poly.v[0].x[1])) > 0;
+
   valid = 1 ;
   valid = ur_x < 0 ? 0 : valid ;
   valid = ur_y < 0 ? 0 : valid ;
   valid = ll_x > screen_w ? 0 : valid ;
   valid = ll_y > screen_h ? 0 : valid ;
-  */
+  valid = isbackface == 1 ? 0 : valid ;  
 			  
 
   //
@@ -304,6 +306,7 @@ int rastBBox_check( int   v0_x,      //uPoly
 
   int b_x[6] ;
   int b_y[6] ;
+  int isbackface;
 
   //Calculate BBox
   b_x[0] = poly.v[0].x[0] < poly.v[1].x[0];
@@ -357,12 +360,14 @@ int rastBBox_check( int   v0_x,      //uPoly
   ll_x = ll_x < 0   ? 0   : ll_x ;
   ll_y = ll_y < 0   ? 0   : ll_y ;
 
+  isbackface = ((poly.v[1].x[0] - poly.v[0].x[0]) * (poly.v[2].x[1] - poly.v[1].x[1]) - (poly.v[2].x[0] - poly.v[1].x[0]) * (poly.v[1].x[1] - poly.v[0].x[1])) > 0;
+
   valid = 1 ;
   valid = ur_x < 0 ? 0 : valid ;
   valid = ur_y < 0 ? 0 : valid ;
   valid = ll_x > screen_w ? 0 : valid ;
   valid = ll_y > screen_h ? 0 : valid ;
-
+  valid = isbackface == 1 ? 0 : valid ;
   //
   //Copy Past C++ Bounding Box Function ****END****
   //
