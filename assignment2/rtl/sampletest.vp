@@ -68,7 +68,9 @@
 //; my $pipe_depth = parameter(Name=>'PipelineDepth',
 //;                            Val=>2, Min=>1, Step=>1,
 //;                            Doc=>"How many pipe stages are in this block");
-//;
+//; my $sampletest_resolution = parameter(Name=>'SampletestResolution',
+//;                            Val=>17, Min=>1, Step=>1,
+//;                            Doc=>"Resolution of the multiplier stage");
 //; # local variables
 //; my $edges = ($verts == 3) ? 3 : 5 ;
 //; my $shortSF = $sig_fig;
@@ -126,13 +128,15 @@ module  `mname()`
 
   /**************** Signals in Access Order ***********************************/
   // Micropolygon after coordinate shift
-  logic signed [`$sig_fig`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
+  //logic signed [`$sig_fig`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
+  logic signed [`$sampletest_resolution`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
 
   // Edges
-  logic signed [`$sig_fig`-1:0]   edge_R16S[`$edges`-1:0][1:0][1:0];
+  //logic signed [`$sig_fig`-1:0]   edge_R16S[`$edges`-1:0][1:0][1:0];
 
   // Result of x_1 * y_2 - x_2 * y_1
-  logic signed [2*`$shortSF`-1:0] dist_lg_R16S[`$edges`-1:0];
+  //logic signed [2*`$shortSF`-1:0] dist_lg_R16S[`$edges`-1:0];
+  logic signed [2*`$sampletest_resolution`-1:0] dist_lg_R16S[`$edges`-1:0];
   // Output (YOUR JOB!)
   logic 			  hit_valid_R16H ;
   // Sample position
@@ -159,7 +163,9 @@ module  `mname()`
   //; for( my $i = 0 ; $i < $verts ; $i++ ) {
   //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
   always_comb begin
-    poly_shift_R16S[`$i`][`$j`] = poly_R16S[`$i`][`$j`] - sample_R16S[`$j`];
+    poly_shift_R16S[`$i`][`$j`] = (poly_R16S[`$i`][`$j`] - sample_R16S[`$j`]);
+    //assert(poly_shift_R16S[`$i`][`$j`] < 2<<13) else $error("polyshift too big! %d", poly_shift_R16S[`$i`][`$j`]);
+    //assert(poly_shift_R16S[`$i`][`$j`] > -2<<13) else $error("polyshift too small! %d", poly_shift_R16S[`$i`][`$j`]);
   end
   //;   }
   //; }
