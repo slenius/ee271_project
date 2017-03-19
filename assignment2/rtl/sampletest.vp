@@ -68,10 +68,11 @@
 //; my $pipe_depth = parameter(Name=>'PipelineDepth',
 //;                            Val=>2, Min=>1, Step=>1,
 //;                            Doc=>"How many pipe stages are in this block");
-//; my $sampletest_resolution = parameter(Name=>'SampletestResolution',
-//;                            Val=>17, Min=>1, Step=>1,
-//;                            Doc=>"Resolution of the multiplier stage");
 //; # local variables
+//; my $debug_mode = 0;
+//; my $color_res = 16;
+//; my $st_res_1 = 17;
+//; my $st_res_2 = 20;
 //; my $edges = ($verts == 3) ? 3 : 5 ;
 //; my $shortSF = $sig_fig;
 //; my $MRound = 2 * $shortSF - $radix;
@@ -119,9 +120,9 @@ module  `mname()`
 
   /**************** Output for retiming registers *****************************/
   // Hit Location
-  logic signed [`$sig_fig`-1:0] hit_R18S_retime[`$axis`-1:0];
+  logic signed [`$st_res_2`-1:0] hit_R18S_retime[`$axis`-1:0];
   // Color of Poly
-  logic unsigned [`$sig_fig`-1:0]  color_R18U_retime[`$colors`-1:0];
+  logic unsigned [`$color_res`-1:0]  color_R18U_retime[`$colors`-1:0];
   // Is hit good
   logic hit_valid_R18H_retime;
   /**************** Output for retiming registers *****************************/
@@ -129,19 +130,26 @@ module  `mname()`
   /**************** Signals in Access Order ***********************************/
   // Micropolygon after coordinate shift
   //logic signed [`$sig_fig`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
-  logic signed [`$sampletest_resolution`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
+  logic signed [`$st_res_1`-1:0]   poly_shift_R16S[`$verts`-1:0][1:0];
 
   // Edges
   //logic signed [`$sig_fig`-1:0]   edge_R16S[`$edges`-1:0][1:0][1:0];
 
   // Result of x_1 * y_2 - x_2 * y_1
   //logic signed [2*`$shortSF`-1:0] dist_lg_R16S[`$edges`-1:0];
-  logic signed [2*`$sampletest_resolution`-1:0] dist_lg_R16S[`$edges`-1:0];
+  logic signed [2*`$st_res_1`-1:0] dist_lg_R16S[`$edges`-1:0];
   // Output (YOUR JOB!)
   logic 			  hit_valid_R16H ;
   // Sample position
-  logic signed [`$sig_fig`-1:0] 	 hit_R16S[`$axis`-1:0];
+  logic signed [`$st_res_2`-1:0] 	 hit_R16S[`$axis`-1:0];
   /**************** Signals in Access Order ***********************************/
+
+  // minimum width variables for sampletest only
+  wire signed [`$st_res_2-1`:0] sample_conn [1:0];
+  wire signed [`$st_res_2-1`:0] poly_conn [`$verts`-1:0][`$axis`-1:0];
+  wire signed [`$st_res_2-1`:0] hit_conn [`$axis`-1:0];
+  wire signed [`$color_res-1`:0] color_in_conn [`$colors`-1:0];
+  wire signed [`$color_res-1`:0] color_out_conn [`$colors`-1:0];
 
   //////// DECLARE OTHER INTERMEDIATE SIGNALS YOU NEED
 
@@ -159,16 +167,140 @@ module  `mname()`
   // (1) Shift X, Y coordinates such that the fragment resides on the (0,0)
   // position.
 
+  //; if($debug_mode){
+  // Open a file for writing out values for debug analysis
+  integer f, g, h;
+  logic  write_sample;
+  integer n_samples;
+  integer sample_hist[`$sig_fig`];
+  integer poly_hist[`$sig_fig`];
+  integer poly_shift_hist[`$sig_fig`];
+  integer color_hist[`$sig_fig`];
+  logic write_output;
+
+  initial begin
+    $display("********************************************************************************");
+    $display(" DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE   ");
+    $display("********************************************************************************");
+    write_output = 1'b0;
+    if (write_output)
+      begin
+        f = $fopen("output_shift.csv","w");
+        g = $fopen("output_poly.csv","w");
+      end
+    n_samples = 0;
+    //; for(my $k=0; $k<$sig_fig; $k++){
+    poly_hist[`$k`] = 0 ;
+    sample_hist[`$k`] = 0 ;
+    poly_shift_hist[`$k`] = 0 ;
+    color_hist[`$k`] = 0 ;
+    //; }
+  end
+
+  always @(negedge clk) begin
+    if (validSamp_R16H===1 && rst===0 && n_samples < 100000)
+      begin
+        write_sample = 1;
+        if (write_output)
+          begin
+            //; for( my $i = 0 ; $i < $verts ; $i++ ) {
+            //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+            $fwrite(f,"%d", poly_shift_R16S[`$i`][`$j`]);
+            $fwrite(g,"%d", poly_R16S[`$i`][`$j`]);
+            //; if(!($i == $verts-1 && $j == 2-1)){
+            $fwrite(f,",");
+            $fwrite(g,",");
+            //;     }
+            //;   }
+            //; }
+            $fwrite(f,"\n");
+            $fwrite(g,"\n");
+          end
+        #1
+        write_sample=0;
+        n_samples = n_samples + 1;
+      end
+    else
+      begin
+        write_sample=0;
+      end
+
+
+    if (validSamp_R16H===1 && rst===0)
+      begin
+        //; for( my $i = 0 ; $i < $verts ; $i++ ) {
+        //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+        //;     for(my $k=0; $k<$sig_fig; $k++){
+        if (poly_R16S[`$i`][`$j`][`$k`] === 1'b1)
+            poly_hist[`$k`] += 1;
+        //;     }
+        //;   }
+        //; }
+        //; for( my $i = 0 ; $i < $verts ; $i++ ) {
+        //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+        //;     for(my $k=0; $k<$st_res_1; $k++){
+        if (poly_shift_R16S[`$i`][`$j`][`$k`] === 1'b1)
+            poly_shift_hist[`$k`] += 1;
+        //;     }
+        //;   }
+        //; }
+
+        //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+        //;     for(my $k=0; $k<$sig_fig; $k++){
+        if (sample_R16S[`$j`][`$k`] === 1'b1)
+            sample_hist[`$k`] += 1;
+        if (color_R16U[`$j`][`$k`] === 1'b1)
+            color_hist[`$k`] += 1;
+        //;   }
+        //; }
+      end
+  end
+
+  final begin
+    h = $fopen("output_hist.csv","w");
+    $fwrite(h,"bin, poly_hist, poly_shift, sample, color\n");
+    //; for(my $k=0; $k<$sig_fig; $k++){
+    $fwrite(h,"%d,%d,%d,%d,%d\n", `$k`, poly_hist[`$k`], poly_shift_hist[`$k`], sample_hist[`$k`], color_hist[`$k`]);
+    //; }
+    $display("********************************************************************************");
+    $display(" DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE DEBUG MODE   ");
+    $display("********************************************************************************");
+    $fclose(f);
+    $fclose(g);
+    $fclose(h);
+  end
+  //; }
+
   // Spot checked correct - SL
-  //; for( my $i = 0 ; $i < $verts ; $i++ ) {
-  //;   for( my $j = 0 ; $j < 2 ; $j++ ) {
+  //; for( my $j = 0 ; $j < 2 ; $j++ ) {
+  //;   for( my $i = 0 ; $i < $verts ; $i++ ) {
   always_comb begin
+    //poly_conn[`$i`][`$j`] = poly_R16S[`$i`][`$j`];
+    //sample_conn[`$j`] = sample_R16S[`$j`];
+    //poly_shift_R16S[`$i`][`$j`] = (poly_conn[`$i`][`$j`] - sample_conn[`$j`]);
     poly_shift_R16S[`$i`][`$j`] = (poly_R16S[`$i`][`$j`] - sample_R16S[`$j`]);
     //assert(poly_shift_R16S[`$i`][`$j`] < 2<<13) else $error("polyshift too big! %d", poly_shift_R16S[`$i`][`$j`]);
     //assert(poly_shift_R16S[`$i`][`$j`] > -2<<13) else $error("polyshift too small! %d", poly_shift_R16S[`$i`][`$j`]);
   end
   //;   }
   //; }
+
+  //;   for( my $i = 0 ; $i < $axis ; $i++ ) {
+  //always_comb begin
+  assign hit_R18S[`$i`][`$st_res_2-1`:0] = hit_conn[`$i`];
+  assign hit_R18S[`$i`][`$sig_fig-1`:`$st_res_2`] = `$sig_fig-$st_res_2`'b0;
+  //end
+  //; }
+
+  //;   for( my $i = 0 ; $i < $colors ; $i++ ) {
+  assign color_in_conn[`$i`] = color_R16U[`$i`];
+  assign color_R18U[`$i`][`$color_res-1`:0] = color_out_conn[`$i`];
+  //; if($color_res != $sig_fig){
+  assign color_R18U[`$i`][`$sig_fig-1`:`$color_res`] = `$sig_fig-$color_res`'b0;
+  //; }
+  //; }
+
+
 
   //// (2) Organize edges (form three edges for triangles)
   always_comb begin
@@ -212,7 +344,8 @@ module  `mname()`
   //; if( $verts == 3) {
   always_comb begin
     //Make sure you use unjittered sample
-    hit_R16S[1:0] = sample_R16S[1:0];
+    hit_R16S[0] = sample_R16S[0];
+    hit_R16S[1] = sample_R16S[1];
     // z value equals the z value of the first vertex
     hit_R16S[2] = poly_R16S[0][2];
   end
@@ -223,22 +356,22 @@ module  `mname()`
   /* Flop R16 to R18_retime with retiming registers*/
 
   //; my $d_samp_r1 = generate( 'dff2', "d_samp_r1",
-  //;                BitWidth=>$sig_fig,
+  //;                BitWidth=>$st_res_2,
   //;                ArraySize1=>$axis,
   //;                PipelineDepth=>$pipe_depth-1,
   //;                Retime=>'YES' );
   `$d_samp_r1->instantiate()` (
-				.in(hit_R16S) ,
+				.in(hit_R16S),
 				.clk(clk) , .reset(rst), .en(1'b1),
 				.out(hit_R18S_retime));
 
   //; my $d_samp_r2 = generate( 'dff2', "d_samp_r2",
-  //;                BitWidth=>$sig_fig,
+  //;                BitWidth=>$color_res,
   //;                ArraySize1=>$colors,
   //;                PipelineDepth=>$pipe_depth-1,
   //;                Retime=>'YES' );
   `$d_samp_r2->instantiate()`(
-			     .in(color_R16U) ,
+			     .in(color_in_conn) ,
 			     .clk(clk) , .reset(rst), .en(1'b1),
 			     .out(color_R18U_retime));
 
@@ -257,24 +390,24 @@ module  `mname()`
   /* Flop R18_retime to R18 with fixed registers */
 
   //; my $d_samp_f1 = generate( 'dff2', "d_samp_f1",
-  //;                BitWidth=>$sig_fig,
+  //;                BitWidth=>$st_res_2,
   //;                ArraySize1=>$axis,
   //;                PipelineDepth=>1,
   //;                Retime=>'NO' );
   `$d_samp_f1->instantiate()` (
 				.in(hit_R18S_retime) ,
 				.clk(clk) , .reset(rst), .en(1'b1),
-				.out(hit_R18S));
+				.out(hit_conn));
 
   //; my $d_samp_f2 = generate( 'dff2', "d_samp_f2",
-  //;                BitWidth=>$sig_fig,
+  //;                BitWidth=>$color_res,
   //;                ArraySize1=>$colors,
   //;                PipelineDepth=>1,
   //;                Retime=>'NO' );
   `$d_samp_f2->instantiate()`(
 			     .in(color_R18U_retime) ,
 			     .clk(clk) , .reset(rst), .en(1'b1),
-			     .out(color_R18U));
+			     .out(color_out_conn));
 
   //; my $d_samp_f3 = generate( 'dff', "d_samp_f3",
   //;                BitWidth=>1,

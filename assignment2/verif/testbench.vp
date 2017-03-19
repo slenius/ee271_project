@@ -523,6 +523,8 @@ task ProcessArgs;
       begin
         //testname="tests/sample_test.dat";
         testname="../vect/vec_271_01_sv.dat";
+        //testname="../vect/vec_271_01_sv_short.dat";
+        //testname="../vect/vec_271_02_sv.dat";
         $display( "Simulation will use test file %s", testname );
       end
 

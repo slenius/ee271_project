@@ -62,7 +62,7 @@
 //;                            Doc=>"How many pipe stages are in this block");
 //; 
 //; # local variables
-//; my $hash_in_width = ($sig_fig-4)*2; 	# to catch that hash is brittle
+//; my $hash_in_width = 40; 	# to catch that hash is brittle
 //; my $hash_out_width = $radix - 2;      	# to catch taht hash is brittle
  
 /* A Note on Signal Names:
@@ -118,8 +118,16 @@ module `mname()`
    logic [`$hash_out_width`-1:0] 	     jitt_val_R14H[1:0] ;
    logic [`$sig_fig`-1:0] 		     sample_jitted_R14S[1:0] ;
 
-   
-   
+   // reduced precision hack
+   logic [1:0][`$hash_in_width/2`-1:0] hin;
+
+   //always @(posedge clk)
+   //  begin
+   always_comb begin
+       hin[0] = sample_R14S[0][`$sig_fig`-1:4];
+       hin[1] = sample_R14S[1][`$sig_fig`-1:4];
+     end
+
    always_comb begin
       assert( $onehot(subSample_RnnnnU) ) ;
       unique case ( 1'b1 )
@@ -130,13 +138,14 @@ module `mname()`
       endcase // case ( 1'b1 )
    end
 
+
    /*always @( posedge clk ) begin
       #100;
      $display( "SV: %.10x %.10x \n" , 
 		{ sample_R14S[1][`$sig_fig`-1:4] , sample_R14S[0][`$sig_fig`-1:4]} ,
 		{ sample_R14S[0][`$sig_fig`-1:4] , sample_R14S[1][`$sig_fig`-1:4]} );
 
-      $display( "SV:  %.8b %.8b %.8b %.8b \n" , 
+      $display( "XJIT:  %.8b %.8b %.8b %.8b \n" , 
 	       xjit_hash.arr32_RnnH[31:24], xjit_hash.arr32_RnnH[23:16],
 	       xjit_hash.arr32_RnnH[15:8], xjit_hash.arr32_RnnH[7:0]);
       $display( "SV: %.8b %.8b \n" , 
@@ -146,7 +155,7 @@ module `mname()`
       $display( "SV: %.8b \n" , 
 		 jitt_val_R14H[0]);
  
-      $display( "SV:  %.8b %.8b %.8b %.8b \n" , 
+      $display( "YJIT:  %.8b %.8b %.8b %.8b \n" , 
 	       yjit_hash.arr32_RnnH[31:24], yjit_hash.arr32_RnnH[23:16],
 	       yjit_hash.arr32_RnnH[15:8], yjit_hash.arr32_RnnH[7:0]);
       $display( "SV: %.8b %.8b  \n" , 
@@ -157,12 +166,13 @@ module `mname()`
 		 jitt_val_R14H[1]);
 
    end*/
-   
+
    //; my $xjit_hash = generate ('tree_hash', ' xjit_hash',
    //;                            InWidth=>$hash_in_width,
    //;                            OutWidth=>$hash_out_width );
    `$xjit_hash -> instantiate()` (
-	      .in_RnnH( { sample_R14S[1][`$sig_fig`-1:4] , sample_R14S[0][`$sig_fig`-1:4]}   ),
+	      .in_RnnH( { hin[1] , hin[0]}   ),
+	      //.in_RnnH( { sample_R14S[1], sample_R14S[0]}   ),
 	      .mask_RnnH( hash_mask_R14H ),
 	      .out_RnnH( jitt_val_R14H[0] )
 	      );
@@ -171,7 +181,8 @@ module `mname()`
    //;                            InWidth=>$hash_in_width,
    //;                            OutWidth=>$hash_out_width );
    `$yjit_hash -> instantiate()` (
-	      .in_RnnH( { sample_R14S[0][`$sig_fig`-1:4] , sample_R14S[1][`$sig_fig`-1:4]} ),
+	      .in_RnnH( { hin[0] , hin[1]} ),
+	      //.in_RnnH( { sample_R14S[0] , sample_R14S[1]} ),
 	      .mask_RnnH( hash_mask_R14H ),
 	      .out_RnnH( jitt_val_R14H[1] )
 	      );

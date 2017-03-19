@@ -84,6 +84,7 @@
 //;   my $radix = shift @_;
 //;   return " 1.0 * $signal_name / ( 128\'d1 << $radix ) ";
 //; }
+//; my $color_res = $sig_fig;
 
 /* A Note on Signal Names:
  *
@@ -119,7 +120,7 @@ module `mname()`
   (
    //Input Signals
    input logic signed [`$sig_fig`-1:0] 	poly_R13S[`$verts`-1:0][`$axis`-1:0], //Micropolygon to Iterate Over
-   input logic unsigned [`$sig_fig`-1:0] color_R13U[`$colors`-1:0] , //Color of Poly
+   input logic unsigned [`$color_res`-1:0] color_R13U[`$colors`-1:0] , //Color of Poly
    input logic 				isQuad_R13H, //Micropolygon is quad
    input logic signed [`$sig_fig`-1:0] 	box_R13S[1:0][1:0], //Box to iterate for subsamples
    input logic 				validPoly_R13H, //Micropolygon is valid
@@ -134,7 +135,7 @@ module `mname()`
 
    //Outputs
    output logic signed [`$sig_fig`-1:0] poly_R14S[`$verts`-1:0][`$axis`-1:0], //Micropolygon to Sample Test
-   output logic unsigned [`$sig_fig`-1:0] color_R14U[`$colors`-1:0] , //Color of Poly
+   output logic unsigned [`$color_res`-1:0] color_R14U[`$colors`-1:0] , //Color of Poly
    output logic signed [`$sig_fig`-1:0] sample_R14S[1:0], //Sample Location to Be Tested
    output logic 			isQuad_R14H, //Micropygon is quad
    output logic 			validSamp_R14H                   //Sample and Micropolygon are Valid
@@ -150,7 +151,7 @@ module `mname()`
    // Now we create the signals for the next states of each outputs and
    // then instantiate registers for storing these states
    logic signed [`$sig_fig`-1:0] 	next_poly_R14S[`$verts`-1:0][`$axis`-1:0];
-   logic unsigned  [`$sig_fig`-1:0] next_color_R14U[`$colors`-1:0] ;
+   logic unsigned  [`$color_res`-1:0] next_color_R14U[`$colors`-1:0] ;
    logic signed [`$sig_fig`-1:0] 	next_sample_R14S[1:0];
    logic 				next_isQuad_R14H;
    logic 				next_validSamp_R14H;
@@ -170,7 +171,7 @@ module `mname()`
 			  .out(poly_R14S));
 
    //; my $d302 = generate( 'dff2', "d302",
-   //;                        BitWidth=>$sig_fig,
+   //;                        BitWidth=>$color_res,
    //;                        ArraySize1=>$colors,
    //;                        PipelineDepth=>1,
    //;                        Retime=>'NO' );

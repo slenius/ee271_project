@@ -109,6 +109,7 @@
 //; my $pipe_depth = parameter(Name=>'PipelineDepth',
 //;                            Val=>3, Min=>1, Step=>1, 
 //;                            Doc=>"How many pipe stages are in this block");
+//; my $color_res = $sig_fig;
 
 /* A Note on Signal Names:
  *
@@ -146,7 +147,7 @@ module `mname()`
   (
    //Input Signals
    input logic signed [`$sig_fig`-1:0] 	poly_R10S[`$verts`-1:0][`$axis`-1:0] , // Sets X,Y Fixed Point Values
-   input logic 				unsigned [`$sig_fig`-1:0] color_R10U[`$colors`-1:0] , // Color of Poly
+   input logic 				unsigned [`$color_res`-1:0] color_R10U[`$colors`-1:0] , // Color of Poly
    input logic 				isQuad_R10H , // Is Poly Quad?
    input logic 				validPoly_R10H , // Valid Data for Operation
 
@@ -161,7 +162,7 @@ module `mname()`
 
    //Outout Signals
    output logic signed [`$sig_fig`-1:0] poly_R13S[`$verts`-1:0][`$axis`-1:0], // 4 Sets X,Y Fixed Point Values
-   output logic 			unsigned [`$sig_fig`-1:0] color_R13U[`$colors`-1:0] , // Color of Poly
+   output logic 			unsigned [`$color_res`-1:0] color_R13U[`$colors`-1:0] , // Color of Poly
    output logic 			isQuad_R13H, // Is Poly Quad?
    output logic signed [`$sig_fig`-1:0] box_R13S[1:0][1:0], // 2 Sets X,Y Fixed Point Values  
    output logic 			validPoly_R13H                  // Valid Data for Operation
@@ -194,7 +195,7 @@ module `mname()`
 
    // output for retiming registers
    logic signed [`$sig_fig`-1:0] 	poly_R13S_retime[`$verts`-1:0][`$axis`-1:0]; // 4 Sets X,Y Fixed Point Values
-   logic 				unsigned [`$sig_fig`-1:0] color_R13U_retime[`$colors`-1:0];        // Color of Poly
+   logic 				unsigned [`$color_res`-1:0] color_R13U_retime[`$colors`-1:0];        // Color of Poly
    logic signed [`$sig_fig`-1:0] 	box_R13S_retime[1:0][1:0];             // 2 Sets X,Y Fixed Point Values  
    logic 				isQuad_R13H_retime;                   // Is Poly Quad?
    logic 				validPoly_R13H_retime ;                 // Valid Data for Operation
@@ -384,7 +385,7 @@ module `mname()`
 			       .out(poly_R13S_retime));
    
    //; my $d_bbx_r2 = generate( 'dff2', "d_bbx_r2", 
-   //;                        BitWidth=>$sig_fig,
+   //;                        BitWidth=>$color_res,
    //;                        ArraySize1=>$colors,
    //;                        PipelineDepth=>$pipe_depth-1,
    //;                        Retime=>'YES' );
@@ -429,7 +430,7 @@ module `mname()`
 			       .out(poly_R13S));
    
    //; my $d_bbx_f2 = generate( 'dff2', "d_bbx_f2", 
-   //;                        BitWidth=>$sig_fig,
+   //;                        BitWidth=>$color_res,
    //;                        ArraySize1=>$colors,
    //;                        PipelineDepth=>1,
    //;                        Retime=>'NO' );
