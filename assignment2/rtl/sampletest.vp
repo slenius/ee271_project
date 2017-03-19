@@ -72,7 +72,7 @@
 //; my $debug_mode = 0;
 //; my $color_res = 16;
 //; my $st_res_1 = 17;
-//; my $st_res_2 = 20;
+//; my $st_res_2 = 21;
 //; my $edges = ($verts == 3) ? 3 : 5 ;
 //; my $shortSF = $sig_fig;
 //; my $MRound = 2 * $shortSF - $radix;
