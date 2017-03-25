@@ -15,11 +15,11 @@ void rastBBox_vec_fix( vector< u_Poly< long , ushort > >& polys,
   u_Poly< long , ushort > poly ;
   long screen_h, screen_w;
 
-  int r_shift = 10;
-  int r_val = 1024;
+  int r_shift = 12;
+  int r_val = 1 << r_shift;
 
-  screen_w = z.w * 1024;
-  screen_h = z.h * 1024;
+  screen_w = z.w * r_val;
+  screen_h = z.h * r_val;
   
   for( i = 0 ; i < l ; i ++ ) {
     poly = polys[i];
@@ -71,22 +71,24 @@ void rastBBox_uPoly_fix( u_Poly< long , ushort >& poly,
     for( s_y = ll_y ; s_y <= ur_y ; s_y += si ){
  
       rastBBox_jhash_jit_fix( s_x, s_y, z.ss_w_lg2, &j_x, &j_y);
-      j_x = j_x << 2;
-      j_y = j_y << 2;
+      //j_x = j_x << 2;
+      //j_y = j_y << 2;
+      j_x = 0;
+      j_y = 0;
       vert = rastBBox_stest_fix( poly , s_x + j_x , s_y + j_y );
  
       if( vert != -1 ){
 	x =  s_x >> r_shift;
 	y =  s_y >> r_shift;
 	ss_x = (s_x - (x << r_shift)) / si;
-	ss_y = (s_y - (y << r_shift)) / si;	
+	ss_y = (s_y - (y << r_shift)) / si;
 	f.z = poly.v[vert].x[2];
 	f.c[0] = poly.v[vert].c[0];
 	f.c[1] = poly.v[vert].c[1];
 	f.c[2] = poly.v[vert].c[2];
 	f.c[3] = poly.v[vert].c[3];
-	z.process_Fragment( x , y , ss_x , ss_y ,  
-			    f.z , f.c[0] , f.c[1] , 
+	z.process_Fragment( x , y , ss_x , ss_y ,
+			    f.z , f.c[0] , f.c[1] ,
 			    f.c[2] , f.c[3] );
       }
     }

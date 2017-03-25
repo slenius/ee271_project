@@ -423,7 +423,7 @@ module `mname()`
    //;                        ArraySize1=>$verts,
    //;                        ArraySize2=>$axis,
    //;                        PipelineDepth=>1,
-   //;                        Retime=>'NO' );
+   //;                        Retime=>'YES' );
    `$d_bbx_f1->instantiate()` (
 			       .in(poly_R13S_retime) , 
 			       .clk(clk) , .reset(rst), .en(halt_RnnnnL),
@@ -433,7 +433,7 @@ module `mname()`
    //;                        BitWidth=>$color_res,
    //;                        ArraySize1=>$colors,
    //;                        PipelineDepth=>1,
-   //;                        Retime=>'NO' );
+   //;                        Retime=>'YES' );
    `$d_bbx_f2->instantiate()`(
 			      .in(color_R13U_retime) , 
 			      .clk(clk) , .reset(rst), .en(halt_RnnnnL),
@@ -444,7 +444,7 @@ module `mname()`
    //;                        ArraySize1=>2,
    //;                        ArraySize2=>2,
    //;                        PipelineDepth=>1,
-   //;                        Retime=>'NO' );
+   //;                        Retime=>'YES' );
    `$d_bbx_f3->instantiate()` (
 			       .in(box_R13S_retime) , 
 			       .clk(clk) , .reset(rst), .en(halt_RnnnnL),
@@ -453,7 +453,7 @@ module `mname()`
    //; my $d_bbx_f4 = generate( 'dff', "d_bbx_f4", 
    //;                        BitWidth=>2,
    //;                        PipelineDepth=>1,
-   //;                        Retime=>'NO' );
+   //;                        Retime=>'YES' );
    `$d_bbx_f4->instantiate()`(
 			      .in({isQuad_R13H_retime, validPoly_R13H_retime}) , 
 			      .clk(clk) , .reset(rst), .en(halt_RnnnnL),

@@ -108,7 +108,7 @@ GENESIS_GEN_FLAGS :=	-gen -top $(TOP_MODULE)					\
 # Input xml/cfg files, input parameters
 GENESIS_CFG_XML	:= empty.xml
 GENESIS_CFG_SCRIPT	:=
-GENESIS_PARAMS	:=
+GENESIS_PARAMS	:= "top_rast.rast.PipesBox=4 top_rast.rast.PipesSamp=4"
 ifneq ($(strip $(GENESIS_CFG_SCRIPT)),)
   GENESIS_GEN_FLAGS	:= $(GENESIS_GEN_FLAGS) -cfg $(GENESIS_CFG_SCRIPT)
   $(warning WARNING: GENESIS_CFG_SCRIPT set to $(GENESIS_CFG_SCRIPT))
@@ -201,7 +201,7 @@ DESIGN_TARGET = rast
 
 # The target clock period and area in library units (nS) (um^2). 45 
 # you should be able to achieve 0.3ns clock rate by adjusting pipeline depths
-CLK_PERIOD=0.8; 
+CLK_PERIOD=0.5; 
 TARGET_AREA=40000;
 
 

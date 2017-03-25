@@ -12,11 +12,11 @@ void rastBBox_vec_fix(vector < u_Poly < int64, ushort > >& polys, zbuff& z) {
   u_Poly < int64, ushort > poly;
   int64 screen_h, screen_w;
 
-  int r_shift = 10;
-  int r_val = 1024;
+  int r_shift = 11;
+  int r_val = 1 << r_shift;
 
-  screen_w = z.w * 1024;
-  screen_h = z.h * 1024;
+  screen_w = z.w * r_val;
+  screen_h = z.h * r_val;
 
   for (i = 0; i < l; i ++) {
     poly = polys[i];

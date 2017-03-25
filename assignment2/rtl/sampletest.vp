@@ -393,7 +393,7 @@ module  `mname()`
   //;                BitWidth=>$st_res_2,
   //;                ArraySize1=>$axis,
   //;                PipelineDepth=>1,
-  //;                Retime=>'NO' );
+  //;                Retime=>'YES' );
   `$d_samp_f1->instantiate()` (
 				.in(hit_R18S_retime) ,
 				.clk(clk) , .reset(rst), .en(1'b1),
@@ -403,7 +403,7 @@ module  `mname()`
   //;                BitWidth=>$color_res,
   //;                ArraySize1=>$colors,
   //;                PipelineDepth=>1,
-  //;                Retime=>'NO' );
+  //;                Retime=>'YES' );
   `$d_samp_f2->instantiate()`(
 			     .in(color_R18U_retime) ,
 			     .clk(clk) , .reset(rst), .en(1'b1),
@@ -412,7 +412,7 @@ module  `mname()`
   //; my $d_samp_f3 = generate( 'dff', "d_samp_f3",
   //;                BitWidth=>1,
   //;                PipelineDepth=>1,
-  //;                Retime=>'NO' );
+  //;                Retime=>'YES' );
   `$d_samp_f3->instantiate()` (
 				.in(hit_valid_R18H_retime) ,
 				.clk(clk) , .reset(rst), .en(1'b1),

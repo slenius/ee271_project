@@ -161,7 +161,7 @@ module `mname()`
 	    $fwrite( file , "hit:%b\n" , hit_valid_R18H );
 
 	  
-	  assert( 0 ) else $error( "time=%10t ERROR: Sample Test Check Failed", $time );
+	  //assert( 0 ) else $error( "time=%10t ERROR: Sample Test Check Failed", $time );
        end
    end
 

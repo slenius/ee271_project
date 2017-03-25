@@ -98,8 +98,8 @@ void RunSTestExpectPass(u_Poly < int64, ushort >& poly,
 bool testRast() {
 
   /* Lets Describe the Screen Space */
-  long r_shift = 10;   //This is the number of fractional bits
-  long r_val   = 1024;  //This is the value of 1  <<  r_shift
+  long r_shift = 1;   //This is the number of fractional bits
+  long r_val   = 1 << r_shift;  //This is the value of 1  <<  r_shift
 
   long screen_w = 1024  <<  r_shift;  // 1024 pixels wide (on x axis)
   long screen_h = 1024  <<  r_shift;  // 1024 pixels tall (on y axis)
